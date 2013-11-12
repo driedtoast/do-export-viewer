@@ -1,0 +1,14 @@
+<Window title="Hello" maximized="true"
+    xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk">
+    <content>
+      <BoxPane styles="{padding:4, horizontalAlignment:'center', verticalAlignment:'center'}">
+             <Label bxml:id="label1" text="Please enter your name"
+              styles="{font:'Arial 20', color:'#ff0000',
+                 horizontalAlignment:'center', verticalAlignment:'center'}"/>
+               <TextInput bxml:id="text1"  /> 
+               <PushButton bxml:id="button1" buttonData="Enter"/>
+         </BoxPane>
+    </content>
+</Window>
