@@ -1,0 +1,21 @@
+<Window title="Hello" maximized="true"
+    xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk">
+    <content>
+      <BoxPane orientation="horizontal" styles="{fill:true, spacing:8}">
+        <ListView bxml:id="listView" selectMode="multi" listData="['Navigation', 'One', 'Two', 'Three']" tooltipText="ListView sample"/>
+      	<Border bxml:id="body" styles="{fill:true}">
+    	  <content>
+      		<BoxPane  orientation="vertical" styles="{fill:true, spacing:8}">
+         	 <Label bxml:id="header" text="Pick an import file" styleName="sectionTitle"/>
+             <ScrollPane horizontalScrollBarPolicy="fill_to_capacity" verticalScrollBarPolicy="fill" preferredHeight="240">
+              <FileBrowser bxml:id="importFile" /> 
+             </ScrollPane>
+             <PushButton bxml:id="importButton" buttonData="Import"/>
+           </BoxPane>
+         </content>
+        </Border>
+      </BoxPane>
+    </content>
+</Window>

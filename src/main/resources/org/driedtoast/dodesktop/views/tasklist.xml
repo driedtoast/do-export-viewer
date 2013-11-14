@@ -1,0 +1,20 @@
+<BoxPane orientation="horizontal" styles="{padding:8}" 
+      	xmlns:bxml="http://pivot.apache.org/bxml"
+    	xmlns:content="org.apache.pivot.wtk.content"
+    	xmlns="org.apache.pivot.wtk">
+      	<TableView bxml:id="taskList" >
+    	  <columns>
+        	<TableView.Column name="completed" width="75">
+        	 <cellRenderer>
+				<content:TableViewCheckboxCellRenderer styles="{horizontalAlignment:'center'}"/>
+			  </cellRenderer>
+        	</TableView.Column>
+        	<TableView.Column name="name" width="375"/>
+        	<TableView.Column name="date" width="75">
+        	  <cellRenderer>
+				<content:TableViewDateCellRenderer styles="{horizontalAlignment:'right'}"/>
+			  </cellRenderer>        	  
+        	</TableView.Column>
+    	  </columns>
+		</TableView>      
+</BoxPane>

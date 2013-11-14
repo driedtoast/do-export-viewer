@@ -1,0 +1,22 @@
+{ 
+  messageText: {
+  
+  	font: {
+       size: "120%",
+       bold: true
+    },
+	color: "#000000",
+	horizontalAlignment:'center', 
+	verticalAlignment:'center'
+  }, 
+ 
+  sectionTitle: {
+  	font: { 
+  	  family: 'Arial 20', 
+  	  color:'#ff0000'
+  	},
+	horizontalAlignment:'center', 
+	verticalAlignment:'center'
+  }
+ 
+}
