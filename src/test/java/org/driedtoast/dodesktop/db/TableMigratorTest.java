@@ -8,15 +8,17 @@ public class TableMigratorTest extends TestCase {
 	
 	@Test
 	public void testTableCreation() throws Exception {
-		DatabaseService service = createDatabaseService();
+		DatabaseService service = TestDbHelper.createDatabaseService();
 		TableMigrator migrator = new TableMigrator(service);
 		migrator.createTable(TestModel.class);
 		assertNotNull(service.getDb().getTable("TESTMODEL"));
 	}
 	
+	
 	@Test
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public void testModelTableCreation() throws Exception {
-		DatabaseService service = createDatabaseService();
+		DatabaseService service = TestDbHelper.createDatabaseService();
 		TableMigrator migrator = new TableMigrator(service);
 		migrator.generateTables();
 		for(Class<?> modelClass: TableMigrator.MODELS) {
@@ -24,11 +26,5 @@ public class TableMigratorTest extends TestCase {
 			assertNotNull(service.getDb().getTable(dao.tableName()));
 		}
 	
-	}
-
-	protected DatabaseService createDatabaseService() throws Exception {
-		TestDatabaseService dbservice = new TestDatabaseService();
-		dbservice.startup();
-		return dbservice;
 	}
 }

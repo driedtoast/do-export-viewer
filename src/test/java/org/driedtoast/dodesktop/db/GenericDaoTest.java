@@ -31,4 +31,24 @@ public class GenericDaoTest extends TestCase {
 	}
 	
 	
+	
+	@Test
+	public void testModelInsert() throws Exception {
+		DatabaseService service = TestDbHelper.createDatabaseService();
+		TableMigrator migrator = new TableMigrator(service);
+		migrator.createTable(TestModel.class);
+		TestModel model = new TestModel();
+		model.setCount(1);
+		model.setName("Oh boy");
+		
+		GenericDao<TestModel> dao = new GenericDao<TestModel>(TestModel.class, service);
+		dao.insert(model);
+		assertNotNull(model.getId());
+		TestModel returnedModel = dao.find(model.getId());
+		assertNotNull(returnedModel);
+		
+		
+	}
+	
+	
 }

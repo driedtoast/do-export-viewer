@@ -1,10 +1,6 @@
 package org.driedtoast.dodesktop.db;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,8 +44,7 @@ public class TableMigrator {
 	 * @param db
 	 * @throws SqlJetException
 	 */
-	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	protected void createTable(Class<?> clazz) throws SqlJetException {
 	  SqlJetDb db = service.getDb();
 	  GenericDao<?> dao = new GenericDao(clazz, service);

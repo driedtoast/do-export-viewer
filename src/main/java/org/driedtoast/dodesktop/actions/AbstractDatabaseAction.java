@@ -21,7 +21,6 @@ public abstract class AbstractDatabaseAction extends Action {
 	
 	
     @Override
-    @SuppressWarnings("unchecked")
     public final void perform(Component source) {
     	this.perform(source, dbservice);
     }

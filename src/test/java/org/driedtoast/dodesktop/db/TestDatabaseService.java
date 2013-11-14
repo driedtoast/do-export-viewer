@@ -9,7 +9,14 @@ public class TestDatabaseService extends DatabaseService {
 		super.startup(true);
 	}
 	
+	@Override
 	public String getDatabaseUrl() {
 	   return ".." + File.pathSeparator + "do-test-data.db";
 	}
+	
+	@Override
+	protected void runMigrations() {
+		
+	}
+	
 }

@@ -1,24 +1,35 @@
 package org.driedtoast.dodesktop.db;
 
-public class TestModel 
-{
+public class TestModel {
 	@Primary()
-	@Indexed(name="id", fieldNames={"id"})
-	private Integer id;
-	
-	
-	@Indexed(name="name", fieldNames={"name"})
+	@Indexed(name = "id", fieldNames = { "id" })
+	private String id;
+
+	@Indexed(name = "name", fieldNames = { "name" })
 	private String name;
-	
-	public Integer getId() {
+
+	private Integer count;
+
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(Integer count) {
+		this.count = count;
+	}
+
+	public String getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+
+	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}

@@ -1,7 +1,11 @@
 package org.driedtoast.dodesktop;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.pivot.beans.BXML;
 import org.apache.pivot.beans.BXMLSerializer;
+import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
@@ -14,6 +18,8 @@ import org.driedtoast.dodesktop.views.ViewManager;
 
 public class DesktopMain implements Application {
 
+	private static final Logger logger = Logger.getLogger(DesktopMain.class.getName());
+	
 	private Window window = null;
 	private DatabaseService dbservice = null;
 
@@ -23,17 +29,19 @@ public class DesktopMain implements Application {
 	private FileBrowser importFile;
 
 	/**
-	 * TODO create import splash TODO task list screen with tags / project names
-	 * TODO sorting table based on date TODO nice design
+	 * TODO create import splash 
+	 * TODO task list screen with tags / project names
+	 * TODO sorting table based on date 
+	 * TODO nice design
 	 */
 
 	@Override
 	public void startup(final Display display,
-			org.apache.pivot.collections.Map<String, String> properties)
+			Map<String, String> properties)
 			throws Exception {
 
 		dbservice = new DatabaseService();
-		dbservice.startup();
+		dbservice.startup(true);
 
 		// String language = properties.get("locale");
 		// Locale locale = (language == null) ? Locale.getDefault() : new
@@ -82,8 +90,7 @@ public class DesktopMain implements Application {
 			try {
 				dbservice.shutdown();
 			} catch (Exception e) {
-				// TODO log this? / alert
-				e.printStackTrace();
+				logger.log(Level.WARNING, "Problem shutting down", e);
 			}
 		}
 		if (window != null) {
@@ -101,7 +108,7 @@ public class DesktopMain implements Application {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Starting the app");
+		logger.info("Starting the app");
 		DesktopApplicationContext.applyStylesheet("/main-style.json");
 		DesktopApplicationContext.main(DesktopMain.class, args);
 	}

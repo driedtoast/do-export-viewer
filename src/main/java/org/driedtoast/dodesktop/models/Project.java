@@ -2,24 +2,49 @@ package org.driedtoast.dodesktop.models;
 
 import java.util.List;
 
-import com.google.gson.JsonObject;
+import org.driedtoast.dodesktop.db.Indexed;
+import org.driedtoast.dodesktop.db.Primary;
 
+import com.google.gson.JsonObject;
 
 // TODO from/to db,
 // TODO create table
 public class Project {
-	
+
+	@Primary
+	private String id;
+
+	@Indexed(name = "externalId", fieldNames = { "externalId" })
 	private String externalId;
 	private String name;
 	private List<Task> tasks;
-	private Group group;
+	private List<Section> sections;
+	
+	@Indexed(name = "groupId", fieldNames = { "groupId" })
+	private String groupId;
 
-	public Group getGroup() {
-		return group;
+	public String getId() {
+		return id;
 	}
 
-	public void setGroup(Group group) {
-		this.group = group;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public List<Section> getSections() {
+		return sections;
+	}
+
+	public void setSections(List<Section> sections) {
+		this.sections = sections;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	public String getExternalId() {

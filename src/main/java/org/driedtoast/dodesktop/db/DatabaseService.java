@@ -31,8 +31,12 @@ public class DatabaseService {
 		} finally {
 		  db.commit();
 		}
+		runMigrations();
+	}
+	
+	protected void runMigrations() {
 		TableMigrator migrator = new TableMigrator(this);
-		migrator.generateTables();
+		migrator.generateTables();		
 	}
 
 	public String getDatabaseUrl() {

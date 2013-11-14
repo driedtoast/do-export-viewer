@@ -14,4 +14,5 @@ public class ViewManager {
 		return ViewManager.class.getResource(view);
 	}
 	
+	// TODO create a stack / card manager?
 }
