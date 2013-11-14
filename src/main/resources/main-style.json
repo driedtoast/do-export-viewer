@@ -17,6 +17,16 @@
   	},
 	horizontalAlignment:'center', 
 	verticalAlignment:'center'
-  }
- 
+  },
+  
+  sidebarList: {
+  	backgroundColor: "#000000",
+  	color: "#ffffff"  	
+  },
+  
+  nonBorder: {  
+    thickness: 0,
+    padding: 8
+  } 
+  
 }

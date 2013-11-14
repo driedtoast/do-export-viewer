@@ -28,7 +28,7 @@ public class ImportExportFileAction extends AbstractDatabaseAction {
 		DataVisitor visitor = new DatabaseDataVisitor(service);
 		TaskCollectorDataVisitor taskListVisitor = new TaskCollectorDataVisitor();
 		try {
-			provider.processData(visitor);
+			provider.processData(visitor, taskListVisitor);
 		} catch (Exception e) {
 			// TODO alert ui message
 			e.printStackTrace();

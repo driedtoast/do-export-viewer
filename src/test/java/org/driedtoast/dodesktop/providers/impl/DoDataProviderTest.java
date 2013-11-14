@@ -21,5 +21,8 @@ public class DoDataProviderTest extends TestCase {
 		List<Task> tasks = visitor.getTasks(); 
 		assertNotNull(tasks);
 		assertTrue(tasks.size() > 0);
+		for(Task task: tasks) {
+			assertNotNull( task.getExternalId());
+		}
 	}
 }

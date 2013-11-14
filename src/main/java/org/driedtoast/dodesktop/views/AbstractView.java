@@ -35,6 +35,9 @@ public abstract class AbstractView<T extends Container> {
 			serializer.bind(this);
 			// parent.clear();
 			Method method = parent.getClass().getMethod("setContent", Component.class);
+			if (method == null) { 
+				method = parent.getClass().getMethod("setView", Component.class);
+			}
 			method.invoke(parent, viewComponent);
 			postRender((T) viewComponent);
 			

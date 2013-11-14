@@ -28,6 +28,14 @@ public class DatabaseDataVisitor implements DataVisitor {
 		projectDao = new GenericDao<Project>(Project.class, service);
 	}
 	
+	// TODO process projects and store in db / update sidebar
+	// TODO process sections and store in db / update sidebar with an
+	// all
+	// TODO process sections in a project store in db
+	// Entries projects
+
+	// TODO insert / find by external id
+	
 	@Override
 	public void visitTask(Task task) {
 		// TODO throw an exception if doesn't work?

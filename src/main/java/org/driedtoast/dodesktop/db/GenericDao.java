@@ -56,6 +56,8 @@ public class GenericDao<T> {
 			if (field.getModifiers() != Modifier.PRIVATE)
 				continue;
 			String name = field.getName();
+			if (!CollectionUtil.contains(DatabaseTypeConverter.SUPPORTED_TYPES, field.getType())) 
+				continue;
 			String getMethod = "get" + StringUtil.upperFirst(name);
 			try {
 				Method method = modelClass.getMethod(getMethod);
@@ -159,10 +161,11 @@ public class GenericDao<T> {
 				for (String field : fieldOrder) {
 					Method method = readMethodCache.get(field);
 					Object value = method.invoke(model);
-
 					if (field.equals(ID) && value == null) {
 						value = UUID.randomUUID().toString();
 						setModelAttribute(model,field, value);
+					} else {
+						value = DatabaseTypeConverter.to(method.getReturnType().cast(value));
 					}
 					values.add(value);
 				}
@@ -172,6 +175,7 @@ public class GenericDao<T> {
 			}
 			return true;
 		} catch (Exception sqle) {
+			sqle.printStackTrace();
 			logger.log(Level.SEVERE, "Issue with inserting record ", sqle);
 		}
 		return false;
@@ -201,12 +205,10 @@ public class GenericDao<T> {
 				ISqlJetTable table = db.getTable(tableName());
 				ISqlJetCursor cursor = table.lookup(
 						tableName() + "_" + ID.toUpperCase(), id);
-				System.out.println(" What is going on with this" + cursor);
 				if (cursor.getRowCount() == 0) {
 					return null;
 				}
 				cursor.first();
-
 				T model = modelClass.cast(modelClass.newInstance());
 				for (String field: fieldOrder) {
 					setModelAttribute(model,field, cursor.getValue(field));
@@ -227,23 +229,7 @@ public class GenericDao<T> {
 				.getType();
 		Method setMethod = modelClass.getMethod("set"
 				+ StringUtil.upperFirst(field), fieldType);
-		if(value.getClass().getSuperclass().equals(Number.class)) {
-			Number number = (Number)value;
-			if(fieldType.equals(Integer.class)) {
-				value = number.intValue();
-			} else if(fieldType.equals(Long.class)) {
-				value = number.longValue();
-			}
-		}
-		if(value.getClass().getSuperclass().equals(String.class)) {
-			if(fieldType.equals(Date.class)) {
-				value = StringUtil.toDate((String)value);
-			}
-		}
-		System.out.print(value.getClass());
-		
-		System.out.print("vs");
-		System.out.println(fieldType);
+		value = DatabaseTypeConverter.from(value, fieldType);
 		setMethod.invoke(model, fieldType.cast(value));
 	}
 

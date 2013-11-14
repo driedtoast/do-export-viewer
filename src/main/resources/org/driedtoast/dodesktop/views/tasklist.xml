@@ -1,7 +1,9 @@
-<BoxPane orientation="horizontal" styles="{padding:8}" 
+<FillPane orientation="vertical" styles="{padding:8}" 
       	xmlns:bxml="http://pivot.apache.org/bxml"
     	xmlns:content="org.apache.pivot.wtk.content"
     	xmlns="org.apache.pivot.wtk">
+    	<ScrollPane horizontalScrollBarPolicy="fill_to_capacity" verticalScrollBarPolicy="fill_to_capacity" preferredHeight="480">
+    	<view>
       	<TableView bxml:id="taskList" >
     	  <columns>
         	<TableView.Column name="completed" width="75">
@@ -16,5 +18,7 @@
 			  </cellRenderer>        	  
         	</TableView.Column>
     	  </columns>
-		</TableView>      
-</BoxPane>
+		</TableView>
+		</view>     
+		</ScrollPane> 
+</FillPane>

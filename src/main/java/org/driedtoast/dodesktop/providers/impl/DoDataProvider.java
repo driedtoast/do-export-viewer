@@ -34,86 +34,78 @@ public class DoDataProvider implements DataProvider {
 		JsonParser parser = new JsonParser();
 		JsonElement jsonElement = null;
 		jsonElement = parser.parse(new FileReader(jsonFile));
-		
+
 		if (jsonElement == null) {
 			return;
 		}
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
-		System.out.println("loading file " + jsonFile);
-		System.out.println(jsonObject);
-
-		List<Task> tasks = new ArrayList<Task>();
-
 		JsonArray workspaces = jsonObject.getAsJsonArray("workspaces");
 		Iterator<JsonElement> elements = workspaces.iterator();
 		while (elements.hasNext()) {
 			JsonObject workspace = elements.next().getAsJsonObject();
 			Group group = Group.fromJson(workspace);
 			visitGroup(group, visitors);
-			// insert / find by external id
-			debug(workspace.getAsJsonObject());
+
 			JsonArray sections = workspace.getAsJsonObject().getAsJsonArray(
 					"sections");
-			List<Section> sectionObjects = processSections(sections, visitors);
-			for (Section sectionObj : sectionObjects) {
-				tasks.addAll(sectionObj.getTasks());
-			}
-
-			// Entries sections
-			// TODO process projects and store in db / update sidebar
-			// TODO process sections and store in db / update sidebar with an
-			// all
-			// TODO process sections in a project store in db
-			// Entries projects
-
+			processSections(sections, visitors);
+			JsonArray projects = workspace.getAsJsonObject().getAsJsonArray(
+					"projects");
+			processProjects(projects, visitors);
 		}
 
 	}
-	
-	
-	/// Visiting methods 
+
+	// / Visiting methods
 	private void visitTask(Task task, DataVisitor... visitors) {
 		// setup task
-		
-		for(DataVisitor visitor: visitors) {
+
+		for (DataVisitor visitor : visitors) {
 			visitor.visitTask(task);
 		}
 	}
-	
+
 	private void visitSection(Section section, DataVisitor... visitors) {
-		for(DataVisitor visitor: visitors) {
+		for (DataVisitor visitor : visitors) {
 			visitor.visitSection(section);
 		}
 	}
-	
+
 	private void visitProject(Project project, DataVisitor... visitors) {
-		for(DataVisitor visitor: visitors) {
+		for (DataVisitor visitor : visitors) {
 			visitor.visitProject(project);
 		}
 	}
-	
+
 	private void visitGroup(Group group, DataVisitor... visitors) {
-		for(DataVisitor visitor: visitors) {
+		for (DataVisitor visitor : visitors) {
 			visitor.visitGroup(group);
 		}
 	}
-	
-	/// End visiting methods
-	
-	
-	
-	
 
-	private void debug(JsonObject jsonObject) {
-		Iterator<Entry<String, JsonElement>> iterator = jsonObject.entrySet()
-				.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, JsonElement> entry = iterator.next();
-			System.out.println("Entries " + entry.getKey());
+	// / End visiting methods
+
+	/**
+	 * Process the projects based on the json array
+	 * 
+	 */
+	protected List<Project> processProjects(JsonArray jsonProjects,
+			DataVisitor... visitors) {
+		List<Project> projects = new ArrayList<Project>();
+		Iterator<JsonElement> projectElements = jsonProjects.iterator();
+		while (projectElements.hasNext()) {
+			JsonObject jsonProject = projectElements.next().getAsJsonObject();
+			Project project = Project.fromJson(jsonProject);
+			visitProject(project, visitors);
+			JsonArray sections = jsonProject.getAsJsonArray("sections");
+			processSections(sections, visitors);
+			projects.add(project);
 		}
+		return projects;
 	}
 
-	protected List<Section> processSections(JsonArray jsonSections, DataVisitor... visitors) {
+	protected List<Section> processSections(JsonArray jsonSections,
+			DataVisitor... visitors) {
 		List<Section> sections = new ArrayList<Section>();
 		Iterator<JsonElement> sectionElements = jsonSections.iterator();
 		while (sectionElements.hasNext()) {
@@ -126,7 +118,8 @@ public class DoDataProvider implements DataProvider {
 		return sections;
 	}
 
-	protected List<Task> processTasks(JsonObject jsonObject, DataVisitor... visitors) {
+	protected List<Task> processTasks(JsonObject jsonObject,
+			DataVisitor... visitors) {
 		JsonArray jsonTasks = jsonObject.getAsJsonArray("tasks");
 		List<Task> tasks = new ArrayList<Task>();
 		Iterator<JsonElement> elements = jsonTasks.iterator();

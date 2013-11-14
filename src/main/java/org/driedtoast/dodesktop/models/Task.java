@@ -103,6 +103,10 @@ public class Task {
 	public boolean isCompleted() {
 		return completed;
 	}
+	
+	public boolean getCompleted() {
+		return isCompleted();
+	}
 
 	public void setCompleted(boolean completed) {
 		this.completed = completed;

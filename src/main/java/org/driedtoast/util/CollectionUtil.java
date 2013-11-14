@@ -24,4 +24,15 @@ public class CollectionUtil {
 		}
 		return sb.toString();
 	}
+	
+	
+	
+	public static boolean contains(Class<?>[] classes, Class<?> clazz) {
+		for(Class<?> cls: classes) {
+			if (cls.equals(clazz)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
