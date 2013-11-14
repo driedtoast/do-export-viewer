@@ -1,0 +1,142 @@
+package org.driedtoast.dodesktop.providers.impl;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.driedtoast.dodesktop.db.GenericDao;
+import org.driedtoast.dodesktop.models.Group;
+import org.driedtoast.dodesktop.models.Project;
+import org.driedtoast.dodesktop.models.Section;
+import org.driedtoast.dodesktop.models.Task;
+import org.driedtoast.dodesktop.providers.DataProvider;
+import org.driedtoast.dodesktop.providers.DataVisitor;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+public class DoDataProvider implements DataProvider {
+
+	private File jsonFile;
+
+	public DoDataProvider(File jsonFile) {
+		this.jsonFile = jsonFile;
+	}
+
+	@Override
+	public void processData(DataVisitor... visitors) throws Exception {
+
+		JsonParser parser = new JsonParser();
+		JsonElement jsonElement = null;
+		jsonElement = parser.parse(new FileReader(jsonFile));
+		
+		if (jsonElement == null) {
+			return;
+		}
+		JsonObject jsonObject = jsonElement.getAsJsonObject();
+		System.out.println("loading file " + jsonFile);
+		System.out.println(jsonObject);
+
+		List<Task> tasks = new ArrayList<Task>();
+
+		JsonArray workspaces = jsonObject.getAsJsonArray("workspaces");
+		Iterator<JsonElement> elements = workspaces.iterator();
+		while (elements.hasNext()) {
+			JsonObject workspace = elements.next().getAsJsonObject();
+			Group group = Group.fromJson(workspace);
+			visitGroup(group, visitors);
+			// insert / find by external id
+			debug(workspace.getAsJsonObject());
+			JsonArray sections = workspace.getAsJsonObject().getAsJsonArray(
+					"sections");
+			List<Section> sectionObjects = processSections(sections, visitors);
+			for (Section sectionObj : sectionObjects) {
+				tasks.addAll(sectionObj.getTasks());
+			}
+
+			// Entries sections
+			// TODO process projects and store in db / update sidebar
+			// TODO process sections and store in db / update sidebar with an
+			// all
+			// TODO process sections in a project store in db
+			// Entries projects
+
+		}
+
+	}
+	
+	
+	/// Visiting methods 
+	private void visitTask(Task task, DataVisitor... visitors) {
+		// setup task
+		
+		for(DataVisitor visitor: visitors) {
+			visitor.visitTask(task);
+		}
+	}
+	
+	private void visitSection(Section section, DataVisitor... visitors) {
+		for(DataVisitor visitor: visitors) {
+			visitor.visitSection(section);
+		}
+	}
+	
+	private void visitProject(Project project, DataVisitor... visitors) {
+		for(DataVisitor visitor: visitors) {
+			visitor.visitProject(project);
+		}
+	}
+	
+	private void visitGroup(Group group, DataVisitor... visitors) {
+		for(DataVisitor visitor: visitors) {
+			visitor.visitGroup(group);
+		}
+	}
+	
+	/// End visiting methods
+	
+	
+	
+	
+
+	private void debug(JsonObject jsonObject) {
+		Iterator<Entry<String, JsonElement>> iterator = jsonObject.entrySet()
+				.iterator();
+		while (iterator.hasNext()) {
+			Entry<String, JsonElement> entry = iterator.next();
+			System.out.println("Entries " + entry.getKey());
+		}
+	}
+
+	protected List<Section> processSections(JsonArray jsonSections, DataVisitor... visitors) {
+		List<Section> sections = new ArrayList<Section>();
+		Iterator<JsonElement> sectionElements = jsonSections.iterator();
+		while (sectionElements.hasNext()) {
+			JsonObject jsonSection = sectionElements.next().getAsJsonObject();
+			Section section = Section.fromJson(jsonSection);
+			visitSection(section, visitors);
+			section.setTasks(processTasks(jsonSection, visitors));
+			sections.add(section);
+		}
+		return sections;
+	}
+
+	protected List<Task> processTasks(JsonObject jsonObject, DataVisitor... visitors) {
+		JsonArray jsonTasks = jsonObject.getAsJsonArray("tasks");
+		List<Task> tasks = new ArrayList<Task>();
+		Iterator<JsonElement> elements = jsonTasks.iterator();
+		while (elements.hasNext()) {
+			JsonElement element = elements.next();
+			Task task = Task.fromJson(element.getAsJsonObject());
+			visitTask(task, visitors);
+			tasks.add(task);
+		}
+		return tasks;
+	}
+
+}
