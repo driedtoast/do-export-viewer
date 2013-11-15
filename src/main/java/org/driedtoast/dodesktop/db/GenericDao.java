@@ -124,6 +124,20 @@ public class GenericDao<T> {
 			}
 			Annotation[] annotations = field.getAnnotations();
 			for (Annotation annotation : annotations) {
+				if (annotation.annotationType().equals(Primary.class)) {
+					StringBuilder indexSql = new StringBuilder();
+					indexSql.append("CREATE INDEX ");
+					indexSql.append(tableName());
+					indexSql.append("_");
+					indexSql.append(ID.toUpperCase());
+					indexSql.append(" ON ");
+					indexSql.append(tableName());
+					indexSql.append("(");
+					indexSql.append(ID.toUpperCase());
+					indexSql.append(")");
+					indexes.add(indexSql.toString());
+					continue;
+				}
 				if (!annotation.annotationType().equals(Indexed.class))
 					continue;
 
@@ -157,18 +171,7 @@ public class GenericDao<T> {
 			db.beginTransaction(SqlJetTransactionMode.WRITE);
 			try {
 				ISqlJetTable table = db.getTable(tableName());
-				List<Object> values = new ArrayList<Object>();
-				for (String field : fieldOrder) {
-					Method method = readMethodCache.get(field);
-					Object value = method.invoke(model);
-					if (field.equals(ID) && value == null) {
-						value = UUID.randomUUID().toString();
-						setModelAttribute(model,field, value);
-					} else {
-						value = DatabaseTypeConverter.to(method.getReturnType().cast(value));
-					}
-					values.add(value);
-				}
+				List<Object> values = getDbValues(model, true);
 				table.insert(values.toArray());
 			} finally {
 				db.commit();
@@ -188,7 +191,64 @@ public class GenericDao<T> {
 	 * @return
 	 */
 	public boolean update(T model) {
+		SqlJetDb db = service.getDb();
+		try {
+			db.beginTransaction(SqlJetTransactionMode.WRITE);
+			try {
+				ISqlJetTable table = db.getTable(tableName());
+				Method method = readMethodCache.get(ID.toLowerCase());
+				Object id = method.invoke(model);
+				
+				ISqlJetCursor cursor = table.lookup(tableName() + "_" + ID.toUpperCase(), id);
+				if (cursor.getRowCount() == 0) {
+					return false;
+				}
+				List<Object> values = getDbValues(model, true);
+				cursor.first();
+				cursor.goTo(cursor.getRowId());
+				cursor.update(values.toArray());
+				cursor.close();
+				return true;
+			} finally {
+				db.commit();
+			}
+		} catch (Exception sqle) {
+			logger.log(Level.SEVERE, "Issue with selecting record ", sqle);
+		}
+
 		return false;
+	}
+	
+	/**
+	 * Finds objects by an index suffix and returns the results
+	 * 
+	 */
+	public List<T> findByIndex(String index, Object...values) {
+		List<T> results = new ArrayList<T>();
+		
+		SqlJetDb db = service.getDb();
+		try {
+			db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
+			try {
+				ISqlJetTable table = db.getTable(tableName());
+				ISqlJetCursor cursor = table.lookup(
+						tableName() + "_" + index.toUpperCase(), values);
+				if (cursor.getRowCount() == 0) {
+					return results;
+				}
+				do {
+					results.add(createModelFromDb(cursor));
+				} while (cursor.next());
+				cursor.close();
+				return results;
+			} finally {
+				db.commit();
+			}
+
+		} catch (Exception sqle) {
+			logger.log(Level.SEVERE, "Issue with selecting record ", sqle);
+		}
+		return results;
 	}
 
 	/**
@@ -209,10 +269,8 @@ public class GenericDao<T> {
 					return null;
 				}
 				cursor.first();
-				T model = modelClass.cast(modelClass.newInstance());
-				for (String field: fieldOrder) {
-					setModelAttribute(model,field, cursor.getValue(field));
-				}
+				T model = createModelFromDb(cursor);
+				cursor.close();
 				return model;
 			} finally {
 				db.commit();
@@ -222,6 +280,32 @@ public class GenericDao<T> {
 			logger.log(Level.SEVERE, "Issue with selecting record ", sqle);
 		}
 		return null;
+	}
+	
+	
+	
+	protected List<Object> getDbValues(T model, boolean generateId) throws Exception {
+		List<Object> values = new ArrayList<Object>();
+		for (String field : fieldOrder) {
+			Method method = readMethodCache.get(field);
+			Object value = method.invoke(model);
+			if (field.equals(ID) && value == null && generateId) {
+				value = UUID.randomUUID().toString();
+				setModelAttribute(model,field, value);
+			} else {
+				value = DatabaseTypeConverter.to(method.getReturnType().cast(value));
+			}
+			values.add(value);
+		}
+		return values;
+	}
+	
+	protected T createModelFromDb(ISqlJetCursor cursor) throws Exception {
+		T model = modelClass.cast(modelClass.newInstance());
+		for (String field: fieldOrder) {
+			setModelAttribute(model,field, cursor.getValue(field));
+		}
+		return model;
 	}
 	
 	protected void setModelAttribute(T model, String field, Object value) throws Exception {

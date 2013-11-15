@@ -1,8 +1,8 @@
 package org.driedtoast.dodesktop.db;
 
 public class TestModel {
+	
 	@Primary()
-	@Indexed(name = "id", fieldNames = { "id" })
 	private String id;
 
 	@Indexed(name = "name", fieldNames = { "name" })

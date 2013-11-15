@@ -5,9 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
-import org.driedtoast.dodesktop.db.GenericDao;
 import org.driedtoast.dodesktop.models.Group;
 import org.driedtoast.dodesktop.models.Project;
 import org.driedtoast.dodesktop.models.Section;

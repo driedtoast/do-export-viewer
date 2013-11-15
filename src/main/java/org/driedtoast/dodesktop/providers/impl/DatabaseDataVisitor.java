@@ -1,5 +1,7 @@
 package org.driedtoast.dodesktop.providers.impl;
 
+import java.util.List;
+
 import org.driedtoast.dodesktop.db.DatabaseService;
 import org.driedtoast.dodesktop.db.GenericDao;
 import org.driedtoast.dodesktop.models.Group;
@@ -40,22 +42,48 @@ public class DatabaseDataVisitor implements DataVisitor {
 	public void visitTask(Task task) {
 		// TODO throw an exception if doesn't work?
 		// Stop the visiting?
-		taskDao.insert(task);
+		List<Task> returned = taskDao.findByIndex("externalId", task.getExternalId());
+		if (returned.size() == 0) { 
+			taskDao.insert(task);
+		} else {
+			task.setId(returned.get(0).getId());
+			taskDao.update(task);
+		}
+		
 	}
 
 	@Override
 	public void visitSection(Section section) {
-		sectionDao.insert(section);
+		List<Section> returned = sectionDao.findByIndex("externalId", section.getExternalId());
+		if (returned.size() == 0) { 
+			sectionDao.insert(section);
+		} else {
+			section.setId(returned.get(0).getId());
+			sectionDao.update(section);
+		}
 	}
 
 	@Override
-	public void visitGroup(Group group) {
-		groupDao.insert(group);
+	public void visitGroup(Group group)
+	{
+		List<Group> returned = groupDao.findByIndex("externalId", group.getExternalId());
+		if (returned.size() == 0) {
+			groupDao.insert(group);
+		} else {
+			group.setId(returned.get(0).getId());
+			groupDao.update(group);
+		}
 	}
 
 	@Override
 	public void visitProject(Project project) {
-		projectDao.insert(project);
+		List<Project> returned = projectDao.findByIndex("externalId", project.getExternalId());
+		if (returned.size() == 0) {
+		   projectDao.insert(project);
+		} else {
+		   project.setId(returned.get(0).getId());
+		   projectDao.update(project);
+		}
 	}
 
 }
