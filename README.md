@@ -17,3 +17,8 @@ TODO:
 * Complete / Uncomplete task
 * Task detail + comment stream
 * Notes
+* Drag and Drop ordering
+* Contact list??
+* Section and task list structuring 
+* Add menu bar to import other files 
+* filter by group?
