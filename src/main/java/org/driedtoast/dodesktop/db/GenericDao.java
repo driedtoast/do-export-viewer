@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.driedtoast.util.CollectionUtil;
 import org.driedtoast.util.StringUtil;
+import org.tmatesoft.sqljet.core.SqlJetException;
 import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
 import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 import org.tmatesoft.sqljet.core.table.ISqlJetTable;
@@ -282,6 +283,56 @@ public class GenericDao<T> {
 		return null;
 	}
 	
+	public long count() {
+		long count = 0;
+		SqlJetDb db = service.getDb();
+		try {
+			try {
+			  db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
+			  ISqlJetTable table = db.getTable(tableName());
+			  ISqlJetCursor cursor = table.open();
+			  return cursor.getRowCount();			  
+			} finally {
+			  db.commit();
+			}
+		} catch (Exception sqle) {
+			logger.log(Level.SEVERE, "Issue with selecting record ", sqle);
+		}
+		return count;
+	}
+				
+	
+	public List<T> list(int count) {
+		List<T> results = new ArrayList<T>();
+		
+		SqlJetDb db = service.getDb();
+		try {
+			db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
+			try {
+				ISqlJetTable table = db.getTable(tableName());
+				ISqlJetCursor cursor = table.open();
+				if (cursor.getRowCount() == 0) {
+					return results;
+				}
+				int rowcount = 0;
+				do {
+					if(rowcount >= count) {
+						break;
+					}
+					results.add(createModelFromDb(cursor));
+					rowcount++;
+				} while (cursor.next());
+				cursor.close();
+				return results;
+			} finally {
+				db.commit();
+			}
+
+		} catch (Exception sqle) {
+			logger.log(Level.SEVERE, "Issue with selecting record ", sqle);
+		}
+		return results;
+	}
 	
 	
 	protected List<Object> getDbValues(T model, boolean generateId) throws Exception {

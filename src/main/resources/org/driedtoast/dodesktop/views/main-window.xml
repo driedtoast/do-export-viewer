@@ -1,25 +1,14 @@
-<Window title="Hello" maximized="true"
+<Window title="Do Desktop" maximized="true"
     xmlns:bxml="http://pivot.apache.org/bxml"
     xmlns:content="org.apache.pivot.wtk.content"
     xmlns="org.apache.pivot.wtk">
     <content>
       <SplitPane orientation="horizontal" splitRatio="0.2">
       	<left>
-      	<ListView bxml:id="listView" selectMode="multi"  styleName="sidebarList"
-        	listData="['Navigation', 'One', 'Two', 'Three']" tooltipText="ListView sample"/>
+      		<Border bxml:id="sidebar" styleName="nonBorderFilled" />
         </left>
         <right>
-        <Border bxml:id="body" styleName="nonBorder">
-    	  <content>
-      		<BoxPane  preferredWidth="440" orientation="vertical" styles="{fill:true, spacing:8}">
-         	 <Label bxml:id="header" text="Pick an import file" styleName="sectionTitle"/>
-             <ScrollPane horizontalScrollBarPolicy="fill_to_capacity" verticalScrollBarPolicy="fill" preferredHeight="240">
-              <FileBrowser bxml:id="importFile" /> 
-             </ScrollPane>
-             <PushButton bxml:id="importButton" buttonData="Import"/>
-           </BoxPane>
-         </content>
-        </Border>
+         	<Border bxml:id="body" styleName="nonBorder" />
        	</right>
       </SplitPane>
     </content>

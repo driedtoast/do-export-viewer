@@ -5,9 +5,11 @@ import java.util.List;
 import org.driedtoast.dodesktop.db.DatabaseService;
 import org.driedtoast.dodesktop.db.GenericDao;
 import org.driedtoast.dodesktop.models.Group;
+import org.driedtoast.dodesktop.models.ModelManager;
 import org.driedtoast.dodesktop.models.Project;
 import org.driedtoast.dodesktop.models.Section;
 import org.driedtoast.dodesktop.models.Task;
+import org.driedtoast.dodesktop.models.ModelListener.EventType;
 import org.driedtoast.dodesktop.providers.DataVisitor;
 
 public class DatabaseDataVisitor implements DataVisitor {
@@ -45,6 +47,7 @@ public class DatabaseDataVisitor implements DataVisitor {
 		List<Task> returned = taskDao.findByIndex("externalId", task.getExternalId());
 		if (returned.size() == 0) { 
 			taskDao.insert(task);
+			ModelManager.getManager().<Task>triggerEvent(EventType.ADD, task);
 		} else {
 			task.setId(returned.get(0).getId());
 			taskDao.update(task);
@@ -57,6 +60,7 @@ public class DatabaseDataVisitor implements DataVisitor {
 		List<Section> returned = sectionDao.findByIndex("externalId", section.getExternalId());
 		if (returned.size() == 0) { 
 			sectionDao.insert(section);
+			ModelManager.getManager().<Section>triggerEvent(EventType.ADD, section);
 		} else {
 			section.setId(returned.get(0).getId());
 			sectionDao.update(section);
@@ -69,6 +73,7 @@ public class DatabaseDataVisitor implements DataVisitor {
 		List<Group> returned = groupDao.findByIndex("externalId", group.getExternalId());
 		if (returned.size() == 0) {
 			groupDao.insert(group);
+			ModelManager.getManager().<Group>triggerEvent(EventType.ADD, group);
 		} else {
 			group.setId(returned.get(0).getId());
 			groupDao.update(group);
@@ -80,6 +85,7 @@ public class DatabaseDataVisitor implements DataVisitor {
 		List<Project> returned = projectDao.findByIndex("externalId", project.getExternalId());
 		if (returned.size() == 0) {
 		   projectDao.insert(project);
+		   ModelManager.getManager().<Project>triggerEvent(EventType.ADD, project);
 		} else {
 		   project.setId(returned.get(0).getId());
 		   projectDao.update(project);

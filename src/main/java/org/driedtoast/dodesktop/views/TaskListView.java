@@ -7,6 +7,7 @@ import org.apache.pivot.collections.List;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Container;
 import org.apache.pivot.wtk.TableView;
+import org.driedtoast.dodesktop.models.ModelListener;
 import org.driedtoast.dodesktop.models.Task;
 
 /**
@@ -14,7 +15,7 @@ import org.driedtoast.dodesktop.models.Task;
  * 
  * @author dmarchant
  */
-public class TaskListView extends AbstractView<Container> {
+public class TaskListView extends AbstractView<Container> implements ModelListener<Task> {
 
 	@BXML
 	private TableView taskList;
@@ -49,6 +50,15 @@ public class TaskListView extends AbstractView<Container> {
 	@Override
 	public String getViewLocation() {
 		return "tasklist.xml";
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void trigger( EventType evt, Task model) {
+		List<Map<String, Object>> data = (List<Map<String, Object>>)taskList.getTableData();
+		if(evt == EventType.ADD) {
+			data.add(convertTask(model));
+		}
 	}
 
 }

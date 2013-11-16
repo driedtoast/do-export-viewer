@@ -27,6 +27,11 @@
   nonBorder: {  
     thickness: 0,
     padding: 8
-  } 
+  },
+  
+  nonBorderFilled: {  
+    thickness: 0,
+    padding: 0
+  }  
   
 }

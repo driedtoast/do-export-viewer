@@ -8,9 +8,10 @@ import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Container;
 
-public abstract class AbstractView<T extends Container> {
+public abstract class AbstractView<T extends Component> {
 
 	protected Container parent;
+	
 	
 	public AbstractView(Container parent) {
 		this.parent = parent;

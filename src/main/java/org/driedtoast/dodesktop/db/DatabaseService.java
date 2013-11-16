@@ -24,7 +24,7 @@ public class DatabaseService {
 		  dbFile.delete();
 		}
 		db = SqlJetDb.open(new File(getDatabaseUrl()), true);	
-		db.getOptions().setAutovacuum(true);
+		// db.getOptions().setAutovacuum(true);
 		db.beginTransaction(SqlJetTransactionMode.WRITE);
 		try {
 		  db.getOptions().setUserVersion(1);

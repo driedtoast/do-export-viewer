@@ -1,0 +1,13 @@
+<BoxPane
+	xmlns:bxml="http://pivot.apache.org/bxml"
+    xmlns:content="org.apache.pivot.wtk.content"
+    xmlns="org.apache.pivot.wtk"   
+	preferredWidth="440" 
+	orientation="vertical" 
+	styles="{fill:true, spacing:8}">
+  <Label bxml:id="header" text="Pick an import file" styleName="sectionTitle"/>
+  <ScrollPane horizontalScrollBarPolicy="fill_to_capacity" verticalScrollBarPolicy="fill" preferredHeight="240">
+    <FileBrowser bxml:id="importFile" /> 
+  </ScrollPane>
+  <PushButton bxml:id="importButton" buttonData="Import"/>
+</BoxPane>

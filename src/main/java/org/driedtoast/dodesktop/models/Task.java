@@ -115,7 +115,11 @@ public class Task {
 	public static Task fromJson(JsonObject object) {
 		Task task = new Task();
 		task.externalId = object.get("id").getAsString();
-		task.name = object.get("name").getAsString();
+		if (object.get("name") != null) {
+			task.name = object.get("name").getAsString();
+		} else {
+			task.name = "Untitled";
+		}
 		// task.date = object.get("due")
 		return task;
 	}

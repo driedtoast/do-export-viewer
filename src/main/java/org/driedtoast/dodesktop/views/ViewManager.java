@@ -13,6 +13,9 @@ public class ViewManager {
 	public static URL getView(String view) {
 		return ViewManager.class.getResource(view);
 	}
+
+	
+	
 	
 	// TODO create a stack / card manager?
 }
